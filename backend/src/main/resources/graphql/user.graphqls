@@ -1,0 +1,12 @@
+type User {
+    id: Int!
+    username: String!
+    email: String!
+    enabled: Boolean!
+    createdAt: String!
+    updatedAt: String!
+}
+
+type Query {
+    getCurrentActiveUser: User
+}
