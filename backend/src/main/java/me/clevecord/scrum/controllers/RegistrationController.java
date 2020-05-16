@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import me.clevecord.scrum.domain.user.entities.User;
 import me.clevecord.scrum.domain.user.repositories.UserRepository;
 import me.clevecord.scrum.errors.ValidationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 @RestController
@@ -30,7 +29,7 @@ public class RegistrationController {
         String password = body.get("password");
         validateRegistration(username, password, email);
 
-        Date now = new Date();
+        ZonedDateTime now = ZonedDateTime.now();
 
         User user = User.builder()
             .username(username)
@@ -43,6 +42,7 @@ public class RegistrationController {
         repo.save(user);
         return ResponseEntity.ok(User.builder()
             .username(username)
+            .password("The password you used during registration.")
             .createdAt(now)
             .build());
     }

@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -42,7 +42,7 @@ public class UserAuthMutationResolver implements GraphQLMutationResolver {
     public CompletableFuture<User> register(final String username, final String email, final String password) throws Exception {
         validateRegistration(username, password, email);
         return CompletableFuture.supplyAsync(() -> {
-            Date now = new Date();
+            ZonedDateTime now = ZonedDateTime.now();
 
             User user = User.builder()
                 .username(username)
@@ -67,9 +67,9 @@ public class UserAuthMutationResolver implements GraphQLMutationResolver {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
+            throw new GQLValidationException("User is disabled.");
         } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+            throw new GQLValidationException("Invalid username or password");
         }
     }
 

@@ -1,0 +1,99 @@
+type Board {
+    id: Int!
+    owner: User!
+    name: String!
+    permissions: [BoardPermission]!
+    description: String
+    createdAt: String!
+    updatedAt: String!
+}
+
+type BoardCategory {
+    id: Int!
+    name: String!
+    description: String
+    priority: Int
+    createdAt: String!
+    updatedAt: String!
+}
+
+type Task {
+    id: Int!
+    task: String!
+    finishedAt: String
+}
+
+type TaskCard {
+    id: Int!
+    title: String!
+    description: String
+    createdAt: String!
+    updatedAt: String!
+    participants: [User]!
+}
+
+type BoardPermissionKey {
+    user: User!
+    permission: String!
+}
+
+type BoardPermission {
+    key: BoardPermissionKey!
+}
+
+type CardComment {
+    id: Int!
+    comment: String!
+    createdAt: String!
+    updatedAt: String!
+}
+
+type BoardPermissionEnum {
+    permissionName: String!
+    canonicalName: String!
+    description: String!
+}
+
+extend type Query {
+    getBoards: [Board!]!
+    getBoardInfo(boardId: Int!): Board
+
+    getCategories(boardId: Int!): [BoardCategory!]!
+    getCategoryInfo(categoryId: Int!): BoardCategory
+    getTaskCards(categoryId: Int!): [TaskCard!]!
+    getTaskCardInfo(taskCardId: Int!): TaskCard
+    getTasks(taskCardId: Int!): [Task!]!
+    getTaskInfo(taskId: Int!): Task
+
+    getComments(taskCardId: Int!): [CardComment]!
+
+    getPermissionNames: [BoardPermissionEnum]!
+}
+
+extend type Mutation {
+    createBoard(name: String!, description: String): Board!
+    updateBoard(boardId: Int!, name: String, description: String): Board!
+    addPermission(boardId: Int!, userId: Int!, permisIsionName: String!): Boolean!
+    removePermission(boardId: Int!, userId: Int!, permissionName: String!): Boolean!
+
+    createCategory(boardId: Int!, name: String!, description: String): BoardCategory!
+    updateCategory(categoryId: Int!, name: String, description: String, priority: Int): BoardCategory!
+    deleteCategory(categoryId: Int!): Boolean!
+
+    createTaskCard(categoryId: Int!, title: String!, description: String): TaskCard!
+    updateTaskCard(taskCardId: Int!, title: String!, description: String): TaskCard!
+    deleteTaskCard(taskCardId: Int!): Boolean!
+    joinCard(taskCardId: Int!): Boolean!
+
+    createTask(taskCardId: Int!, taskString: String!, finished: Boolean): Task!
+    updateTask(taskId: Int!, taskString: String, finished: Boolean): Task!
+    deleteTask(taskId: Int!): Boolean!
+
+    moveCardCategory(cardId: Int!, categoryId: Int!): TaskCard!
+#    moveCardBoard(cardId: Int!, boardId: Int!): TaskCard! # Future improvement.
+#    moveCategoryBoard(categoryId: Int!, boardId: Int!): BoardCategory! # Future improvement.
+
+    postComment(cardId: Int!, comment: String!): CardComment!
+    updateComment(commentId: Int!, comment: String!): CardComment!
+    deleteComment(commentId: Int!): Boolean!
+}
